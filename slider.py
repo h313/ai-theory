@@ -1,3 +1,6 @@
+import re
+import sys
+
 def manhattan(r, c, puzzle):
     target_row = puzzle[r][c] / 4
     target_col = puzzle[r][c] % 4
@@ -23,9 +26,15 @@ def djikstra(puzzle, prev_cost):
     curr_cost = total_cost(puzzle)
     print(curr_cost)
 
+    # If it has zero cost, yess
+    if curr_cost is 0:
+        return True
+
     # If it has a greater cost, turn back
     if curr_cost < prev_cost:
         return False
+
+    a = False
 
     # Now try out each new move
     space = find_space(puzzle)
@@ -37,9 +46,7 @@ def djikstra(puzzle, prev_cost):
         puzz[space[0]][space[1]] = puzz[space[0] + i][space[1]]
         puzz[space[0] + i][space[1]] = temp
 
-        if djikstra(puzz, curr_cost):
-            print("uau")
-            exit(0)
+        a = djikstra(puzz, curr_cost)
 
     # Now do it left-right
     for i in [-1, 1]:
@@ -49,6 +56,25 @@ def djikstra(puzzle, prev_cost):
         puzz[space[0]][space[1]] = puzz[space[0]][space[1] + i]
         puzz[space[0]][space[1] + i] = temp
 
-        if djikstra(puzz, curr_cost):
-            print("uau")
-            exit(0)
+        a = djikstra(puzz, curr_cost)
+
+    if a:
+        print("uau")
+        exit(0)
+
+
+# Read the file and put it into an array
+f = open("puzzle.txt", "r")
+input = f.readlines()
+puzz_not_number = []
+for string in input:
+    puzz_not_number.append(re.findall("[\w']+", string))
+
+# Turn the puzzle into ints
+
+for i in puzz_not_number:
+    for it in i:
+        print("TODO")
+
+djikstra(puzzle, sys.maxsize)
+
