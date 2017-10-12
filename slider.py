@@ -70,11 +70,14 @@ puzz_not_number = []
 for string in input:
     puzz_not_number.append(re.findall("[\w']+", string))
 
-# Turn the puzzle into ints
+# Turn the puzzle into a 4x4 array
+puzzle = [[0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0],
+          [0, 0, 0, 0]]
 
-for i in puzz_not_number:
-    for it in i:
-        print("TODO")
+for i in range(0, 4):
+	print(puzz_not_number[4 * (i - 1):4 * i])
 
 djikstra(puzzle, sys.maxsize)
 
