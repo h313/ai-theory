@@ -1,12 +1,14 @@
 import re
 import sys
 
+
 def manhattan(r, c, puzzle):
     target_row = puzzle[r][c] / 4
     target_col = puzzle[r][c] % 4
 
     d = abs(target_row - r) + abs(target_col - c)
     return d
+
 
 def total_cost(puzzle):
     total = 0
@@ -16,10 +18,12 @@ def total_cost(puzzle):
 
     return total
 
+
 def find_space(puzzle):
     for row, col in enumerate(puzzle):
         if -1 in col:
             return [row, col]
+
 
 def djikstra(puzzle, prev_cost):
     # Get the current cost of this iteration
@@ -65,19 +69,20 @@ def djikstra(puzzle, prev_cost):
 
 # Read the file and put it into an array
 f = open("puzzle.txt", "r")
-input = f.readlines()
-puzz_not_number = []
-for string in input:
-    puzz_not_number.append(re.findall("[\w']+", string))
+inp = f.readlines()
+puzzle = []
+for string in inp:
+    puzzle.append(re.findall("[\w']+", string))
 
-# Turn the puzzle into a 4x4 array
-puzzle = [[0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0],
-          [0, 0, 0, 0]]
+print(puzzle)
 
 for i in range(0, 4):
-	print(puzz_not_number[4 * (i - 1):4 * i])
+    for it in range(0, 4):
+        puzzle[i][it] = ord(puzzle[i][it]) - 65
+        if puzzle[i][it] is 18:
+            puzzle[i][it] = 16
+
+print(puzzle)
 
 djikstra(puzzle, sys.maxsize)
 
