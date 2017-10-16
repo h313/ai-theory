@@ -20,9 +20,8 @@ def total_cost(puzzle):
 
 
 def find_space(puzzle):
-    for row, col in enumerate(puzzle):
+    for col in enumerate(puzzle):
         if 15 in col:
-            return [row, col]
 
 
 def djikstra(puzzle, prev_cost):
