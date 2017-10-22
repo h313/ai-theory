@@ -1,6 +1,7 @@
 import re
 import sys
 
+puzz_list = []
 
 def manhattan(r, c, puzzle):
     target_row = puzzle[r][c] // 4
@@ -20,8 +21,10 @@ def total_cost(puzzle):
 
 
 def find_space(puzzle):
-    for col in enumerate(puzzle):
-        if 15 in col:
+    for i in range(0, 4):
+        for it in range(0, 4):
+            if puzzle[i][it] == 15:
+                return [i, it]
 
 
 def djikstra(puzzle, prev_cost):
@@ -37,36 +40,40 @@ def djikstra(puzzle, prev_cost):
     if curr_cost > prev_cost:
         return False
 
+    # If this array has already been checked, turn back
+    if puzzle in puzz_list:
+        return False
+    else:
+        puzz_list.append(puzzle)
+
     a = False
 
     # Now try out each new move
-    space = find_space(puzzle)
     # Do it up-down
     for i in [-1, 1]:
+        space = find_space(puzzle)
         puzz = puzzle
-        # swap out the space and the thing to be changed
-        temp = puzz[space[0]][space[1]]
-        puzz[space[0]][space[1]] = puzz[space[0] + i][space[1]]
-        puzz[space[0] + i][space[1]] = temp
-        print(puzz)
+        if space[0] + i != -1 and space[0] + i != 4:
+            # swap out the space and the thing to be changed
+            temp = puzz[space[0] + i][space[1]]
+            puzz[space[0] + i][space[1]] = puzz[space[0]][space[1]]
+            puzz[space[0]][space[1]] = temp
 
-        a = djikstra(puzz, curr_cost)
+            if djikstra(puzz, curr_cost):
+                return True
 
     # Now do it left-right
     for i in [-1, 1]:
+        space = find_space(puzzle)
         puzz = puzzle
-        # swap out the space and the thing to be changed
-        temp = puzz[space[0]][space[1]]
-        puzz[space[0]][space[1]] = puzz[space[0]][space[1] + i]
-        puzz[space[0]][space[1] + i] = temp
-        print(puzz)
+        if space[1] + i != -1 and space[1] + i != 4:
+            # swap out the space and the thing to be changed
+            temp = puzz[space[0]][space[1] + i]
+            puzz[space[0]][space[1] + i] = puzz[space[0]][space[1]]
+            puzz[space[0]][space[1]] = temp
 
-        a = djikstra(puzz, curr_cost)
-
-    if a:
-        print("uau")
-        exit(0)
-
+            if djikstra(puzz, curr_cost):
+                return True
 
 # Read the file and put it into an array
 f = open("puzzle.txt", "r")
@@ -84,5 +91,4 @@ for i in range(0, 4):
 
 print(puz)
 
-
-djikstra(puz, sys.maxsize)
+print(djikstra(puz, sys.maxsize))
