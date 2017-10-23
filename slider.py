@@ -1,7 +1,9 @@
 import re
 import sys
+import hashlib
 
 puzz_list = []
+
 
 def manhattan(r, c, puzzle):
     target_row = puzzle[r][c] // 4
@@ -30,30 +32,32 @@ def find_space(puzzle):
 def djikstra(puzzle, prev_cost):
     # Get the current cost of this iteration
     curr_cost = total_cost(puzzle)
-    print(curr_cost)
-
-    # If it has zero cost, yess
-    if curr_cost is 0:
-        return True
-
-    # If it has a greater cost, turn back
-    if curr_cost > prev_cost:
-        return False
 
     # If this array has already been checked, turn back
-    if puzzle in puzz_list:
+    m = hashlib.md5()
+    m.update(str(puzzle).encode('utf-8'))
+    md5 = m.hexdigest()
+    if md5 in puzz_list:
         return False
     else:
-        puzz_list.append(puzzle)
+        puzz_list.append(md5)
 
-    a = False
+    for i in puzzle:
+        print(i)
+    print(curr_cost)
+
+    # If it has zero cost, done
+    if curr_cost is 0:
+        return True
+    elif curr_cost > prev_cost:
+        return False
 
     # Now try out each new move
     # Do it up-down
     for i in [-1, 1]:
         space = find_space(puzzle)
-        puzz = puzzle
-        if space[0] + i != -1 and space[0] + i != 4:
+        puzz = puzzle[:]
+        if 0 <= space[0] + i <= 3:
             # swap out the space and the thing to be changed
             temp = puzz[space[0] + i][space[1]]
             puzz[space[0] + i][space[1]] = puzz[space[0]][space[1]]
@@ -65,8 +69,8 @@ def djikstra(puzzle, prev_cost):
     # Now do it left-right
     for i in [-1, 1]:
         space = find_space(puzzle)
-        puzz = puzzle
-        if space[1] + i != -1 and space[1] + i != 4:
+        puzz = puzzle[:]
+        if 0 <= space[1] + i <= 3:
             # swap out the space and the thing to be changed
             temp = puzz[space[0]][space[1] + i]
             puzz[space[0]][space[1] + i] = puzz[space[0]][space[1]]
@@ -74,6 +78,9 @@ def djikstra(puzzle, prev_cost):
 
             if djikstra(puzz, curr_cost):
                 return True
+
+    return False
+
 
 # Read the file and put it into an array
 f = open("puzzle.txt", "r")
@@ -92,3 +99,4 @@ for i in range(0, 4):
 print(puz)
 
 print(djikstra(puz, sys.maxsize))
+print(puzz_list)
