@@ -103,7 +103,7 @@ for string in inp:
 for i in range(0, 4):
     for it in range(0, 4):
         # make sure to turn S into #15
-        puz[i][it] = 15 if ord(puz[i][it]) - 65 is 18 else ord(puz[i][it]) - 65
+        puz[i][it] = 15 if ord(puz[i][it]) - 65 == 18 else ord(puz[i][it]) - 65
 
 # Actually do the thing
 djikstra(puz, sys.maxsize)
