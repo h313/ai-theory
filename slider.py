@@ -2,6 +2,7 @@ import re
 import sys
 import hashlib
 import copy
+import time
 
 # This thing stores md5 sums of states visited in the past
 puzz_list = []
@@ -105,8 +106,14 @@ for i in range(0, 4):
         # make sure to turn S into #15
         puz[i][it] = 15 if ord(puz[i][it]) - 65 == 18 else ord(puz[i][it]) - 65
 
+start = time.time()
+
 # Actually do the thing
 djikstra(puz, sys.maxsize)
+
+end = time.time()
+
+print(end - start)
 
 # Print the finished thing
 for puzzle in reversed(stack):
