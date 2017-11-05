@@ -38,7 +38,10 @@ def find_space(puzzle):
 
 
 # Pure magic
-def djikstra(puzzle, prev_cost):
+def djikstra(puzzle, priority):
+    puzzle = priority[0][1]
+    priority = priority[1:]
+
     # Get the current cost of this iteration
     curr_cost = total_cost(puzzle)
 
@@ -53,11 +56,10 @@ def djikstra(puzzle, prev_cost):
         puzz_list.append(md5)
 
     # If it has zero cost, done
-    if curr_cost is 0:
+    if total_cost(puzzle) is 0:
         stack.append(puzzle)
+        print("ayy")
         return True
-    elif curr_cost > prev_cost:
-        return False
 
     # Now try out each new move
     # Do it up-down
@@ -70,8 +72,11 @@ def djikstra(puzzle, prev_cost):
             puzz[space[0] + i][space[1]] = puzz[space[0]][space[1]]
             puzz[space[0]][space[1]] = temp
 
+            priority.append([total_cost(puzz), puzz])
+            priority.sort()
+
             # This way got to the right solution so add this state onto the thing
-            if djikstra(puzz, curr_cost) is True:
+            if djikstra(puzz, priority) is True:
                 stack.append(puzzle)
                 return True
 
@@ -85,8 +90,11 @@ def djikstra(puzzle, prev_cost):
             puzz[space[0]][space[1] + i] = puzz[space[0]][space[1]]
             puzz[space[0]][space[1]] = temp
 
+            priority.append([total_cost(puzz), puzz])
+            priority.sort()
+
             # This way got to the right solution so add this state onto the thing
-            if djikstra(puzz, curr_cost) is True:
+            if djikstra(puzz, priority) is True:
                 stack.append(puzzle)
                 return True
 
@@ -109,7 +117,7 @@ for i in range(0, 4):
 start = time.time()
 
 # Actually do the thing
-djikstra(puz, sys.maxsize)
+print(djikstra(puz, [[total_cost(puz), puz]]))
 
 end = time.time()
 
