@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/ai-theory.iml" filepath="$PROJECT_DIR$/.idea/ai-theory.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../cannonnn/.idea/cannonnn.iml" filepath="$PROJECT_DIR$/../cannonnn/.idea/cannonnn.iml" />
     </modules>
   </component>
 </project>
