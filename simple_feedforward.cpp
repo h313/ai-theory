@@ -85,9 +85,9 @@ public:
 
 int main(){
     // Declare the neurons in the middle layer
-    vector<float> h1_weights = {5.0, 6.0, -3.0};
+    vector<float> h1_weights = {5.0, -6.0, -3.0};
     Neuron h1(0.5, h1_weights);
-    vector<float> h2_weights = {-6.0, 6.0, 3.0};
+    vector<float> h2_weights = {-6.0, 6.0, -3.0};
     Neuron h2(0.5, h2_weights);
     Neuron b2(true, 1.0);
 
