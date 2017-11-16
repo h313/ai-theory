@@ -1,6 +1,14 @@
 /*
 A simple feedforward neural network.
 Assumes that it is a dense network.
+
+Anyways here's a story about this piece of code.
+Okay so like I was writing it in Python when I realized that
+I had no idea how Python pointers worked and also had no idea
+how classes worked in Python right? And then I was like wait C++
+has great pointer control and stuff! So I switched to C++ and
+then I realized I didn't know how to C++. Please see attached meme
+for a summary of this experience.
 */
 #include <vector>
 #include <iostream>
@@ -25,7 +33,6 @@ public:
 			for(int input_index = 0; input_index < weights.size(); input_index++) {
                 z += float(weights[input_index]) * float(layer_output -> at(input_index)) - bias;
             }
-            cout << z << endl;
             // return the sigmoid function
             return 1.0 / (1.0 - exp(-z));
         }
