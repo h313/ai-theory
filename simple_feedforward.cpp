@@ -30,11 +30,11 @@ public:
         if (weights.size() == layer_output -> size()) {
             // get the z thing by adding each connecting neuron up
             float z = 0;
-			for(int input_index = 0; input_index < weights.size(); input_index++) {
+            for(int input_index = 0; input_index < weights.size(); input_index++) {
                 z += float(weights[input_index]) * float(layer_output -> at(input_index)) - bias;
             }
             // return the sigmoid function
-            return 1.0 / (1.0 - exp(-z));
+            return 1.0 / (1.0 + exp(-z));
         }
     }
 
