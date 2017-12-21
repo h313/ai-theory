@@ -24,13 +24,12 @@ float mse(float ideal, float actual) {
 class Neuron {
 private:    
     // Gets the node deltas
-    float node_delta(float error, float output, float sigmoid()) {
-        int sig = this -> sigmoid(output);
-        return -1 * mse(error, output) * sig * (1 - sig);
+    float node_delta(float error, float output) {
+        return -1 * mse(error, output) * output * (1 - output);
     }
     // Gets the gradient
     float gradient(float error, float output) {
-        return this -> node_delta(error, output) * this -> sigmoid(layer_output);
+        return this -> node_delta(error, output) * output;
     }
 public:
     int bias;
@@ -95,7 +94,8 @@ public:
     void backpropogate(int ideal) {
         int error = mse(this -> get_layer_output()[0], 1);
         for(int i = 0; i < neurons.size(); i++) {
-            cout << "yeah";
+            if(!neurons.at(i) -> const_output)
+                neurons.at(i) -> backpropogate(mse(),layer_about -> get_layer_output());
         }
     }
     // Constructor
@@ -151,7 +151,9 @@ int main(){
 
     // Get the output of the layer
     vector<float> output = output_layer.get_layer_output();
-    cout << "output is " << output[0] << endl;
+    cout << "initial output is " << output[0] << endl;
+
+    output_layer.backpropogate(1);
 
     return 0;
 }
