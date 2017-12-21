@@ -92,10 +92,11 @@ public:
         return ret;
     }
     void backpropogate(int error) {
-        int error = mse(this -> get_layer_output()[0], 1);
         for(int i = 0; i < neurons.size(); i++) {
-            if(!neurons.at(i) -> const_output)
-                neurons.at(i) -> backpropogate(error, layer_above -> get_layer_output());
+            if(!neurons.at(i) -> const_output) {
+                vector<float> output = layer_above -> get_layer_output();
+                neurons.at(i) -> backpropogate(error, &output);
+            }
         }
     }
     // Constructor
