@@ -17,24 +17,20 @@ float rand_float() {
 }
 
 // Calculates the mean squared error
-float mse(float ideal, vector<float>* values) {
-    int ret = 0;
-    for (int i = 0; i < values -> size(); i++) {
-        ret += pow((ideal - values -> at(i)), 2);
-    }
-    return ret / values -> size();
+float mse(float ideal, float actual) {
+    return ideal - actual;
 }
 
 class Neuron {
 private:    
     // Gets the node deltas
-    float node_delta(float ideal, vector<float>* layer_output) {
-        int sig = this -> sigmoid(layer_output);
-        return -1 * mse(ideal, layer_output) * sig * (1 - sig);
+    float node_delta(float error, float output, float sigmoid()) {
+        int sig = this -> sigmoid(output);
+        return -1 * mse(error, output) * sig * (1 - sig);
     }
-    // Gets the gradients
-    float gradient(float ideal, vector<float>* layer_output) {
-        return this -> node_delta(ideal, layer_output) * this -> sigmoid(layer_output);
+    // Gets the gradient
+    float gradient(float error, float output) {
+        return this -> node_delta(error, output) * this -> sigmoid(layer_output);
     }
 public:
     int bias;
@@ -55,6 +51,13 @@ public:
             }
             // return the sigmoid function
             return 1.0 / (1.0 + exp(-z));
+        }
+    }
+    void backpropogate(float error, vector<float>* layer_output) {
+        for(int i = 0; i < this -> weights.size(); i++) {
+            float temp = this -> previous[i];
+            this -> previous[i] = this -> weights[i];
+            this -> weights[i] = LEARN_WEIGHT * gradient(error, layer_output -> at(i)) + MOMENTUM * temp;
         }
     }
     // Constructors for the neuron
@@ -88,6 +91,12 @@ public:
             ret.push_back(neurons[i] -> sigmoid(&inputs));
 		}
         return ret;
+    }
+    void backpropogate(int ideal) {
+        int error = mse(this -> get_layer_output()[0], 1);
+        for(int i = 0; i < neurons.size(); i++) {
+            cout << "yeah";
+        }
     }
     // Constructor
     Layer(Layer & Layer_Above) {
