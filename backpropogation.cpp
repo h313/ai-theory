@@ -6,12 +6,40 @@ Assumes that it is a dense network.
 #include <iostream>
 #include <cmath>
 
+#define LEARN_WEIGHT 0.7
+#define MOMENTUM 0.3
+
 using namespace std;
 
+// makes a random float from -10.0 to 10.0 to work with building the 
+float rand_float() {
+    return -10.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/20.0f));
+}
+
+// Calculates the mean squared error
+float mse(float ideal, vector<float>* values) {
+    int ret = 0;
+    for (int i = 0; i < values -> size(); i++) {
+        ret += pow((ideal - values -> at(i)), 2);
+    }
+    return ret / values -> size();
+}
+
 class Neuron {
+private:    
+    // Gets the node deltas
+    float node_delta(float ideal, vector<float>* layer_output) {
+        int sig = this -> sigmoid(layer_output);
+        return -1 * mse(ideal, layer_output) * sig * (1 - sig);
+    }
+    // Gets the gradients
+    float gradient(float ideal, vector<float>* layer_output) {
+        return this -> node_delta(ideal, layer_output) * this -> sigmoid(layer_output);
+    }
 public:
     int bias;
     vector<float> weights;
+    vector<float> previous;
     bool const_output = false;
     // Sigmoid function
     float sigmoid(vector<float>* layer_output) {
@@ -29,10 +57,12 @@ public:
             return 1.0 / (1.0 + exp(-z));
         }
     }
-
     // Constructors for the neuron
     Neuron(int Bias, vector<float> Weights) : weights(Weights) {
         bias = Bias;
+        previous = vector<float>();
+        for(int i = 0; i < Weights.size(); i++)
+            previous.push_back(0.0f);
     }
     // Override for dropout neurons (using bias for multiple things now!)
     Neuron(bool Const_Output, int Bias) {
@@ -82,11 +112,6 @@ public:
     }
 };
 
-// makes a random float from -10.0 to 10.0
-float rand_float() {
-	return -10.0f + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/20.0f));
-}
-
 int main(){
     // Declare the neurons in the middle layer
     vector<float> h1_weights = {rand_float(), rand_float(), rand_float()};
@@ -96,7 +121,7 @@ int main(){
     Neuron b2(true, 1.0);
 
     // Declare the neuron in the output layer
-    vector<float> o1_weights = {rand_float(), 10.0, -5.0};
+    vector<float> o1_weights = {rand_float(), rand_float(), rand_float()};
     Neuron o1(0.5, o1_weights);
 
     cout << "Neurons created!" << endl;
