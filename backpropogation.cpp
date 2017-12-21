@@ -91,11 +91,11 @@ public:
 		}
         return ret;
     }
-    void backpropogate(int ideal) {
+    void backpropogate(int error) {
         int error = mse(this -> get_layer_output()[0], 1);
         for(int i = 0; i < neurons.size(); i++) {
             if(!neurons.at(i) -> const_output)
-                neurons.at(i) -> backpropogate(mse(),layer_about -> get_layer_output());
+                neurons.at(i) -> backpropogate(error, layer_about -> get_layer_output());
         }
     }
     // Constructor
@@ -153,7 +153,7 @@ int main(){
     vector<float> output = output_layer.get_layer_output();
     cout << "initial output is " << output[0] << endl;
 
-    output_layer.backpropogate(1);
+    output_layer.backpropogate(1 - output[0]);
 
     return 0;
 }
