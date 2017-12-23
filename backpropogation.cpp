@@ -25,7 +25,7 @@ class Neuron {
 private:    
     // Gets the node deltas
     float node_delta(float error, float output) {
-        return -1 * mse(error, output) * output * (1 - output);
+        return -1 * mse(error, output) * output * (1.0f - output);
     }
     // Gets the gradient
     float gradient(float error, float output) {
@@ -52,6 +52,7 @@ public:
             return 1.0 / (1.0 + exp(-z));
         }
     }
+    // Backpropogate for just this neuron
     void backpropogate(float error, vector<float>* layer_output) {
         for(int i = 0; i < this -> weights.size(); i++) {
             float temp = this -> previous[i];
@@ -91,15 +92,22 @@ public:
 		}
         return ret;
     }
-    virtual void backpropogate(int error) {
+    //Does the whole backpropogation thing over a layer
+    virtual void backpropogate(float error) {
+        // This part does it for each neuron
         for(int i = 0; i < neurons.size(); i++) {
-            cout << "backpropogating for " << i << " in " << neurons.size() << endl;
             if(!neurons.at(i) -> const_output) {
                 vector<float> output = layer_above -> get_layer_output();
                 neurons.at(i) -> backpropogate(error, &output);
             }
         }
+        // THis thing does backpropogation for all of it
         layer_above -> backpropogate(error);
+    }
+    // This corrects the error
+    float correct_error(float error) {
+        this -> backpropogate(error);
+        return get_layer_output()[0];
     }
     // Constructor
     Layer(Layer & Layer_Above) {
@@ -119,7 +127,7 @@ public:
         return inputs;
     }
     // This needs to be empty since you don't do it for backpropogation
-    void backpropogate(int error) {}
+    void backpropogate(float error) {}
     // Constructor for the inputlayer
     InputLayer(vector<float> outputs) {
         inputs = outputs;
@@ -158,7 +166,9 @@ int main(){
     vector<float> output = output_layer.get_layer_output();
     cout << "initial output is " << output[0] << endl;
 
-    output_layer.backpropogate(1 - output[0]);
+    while(true) {
+        cout << output_layer.correct_error(1.0f - output_layer.get_layer_output()[0]) << endl;
+    }
 
     return 0;
 }
