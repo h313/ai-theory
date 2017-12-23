@@ -91,13 +91,15 @@ public:
 		}
         return ret;
     }
-    void backpropogate(int error) {
+    virtual void backpropogate(int error) {
         for(int i = 0; i < neurons.size(); i++) {
+            cout << "backpropogating for " << i << " in " << neurons.size() << endl;
             if(!neurons.at(i) -> const_output) {
                 vector<float> output = layer_above -> get_layer_output();
                 neurons.at(i) -> backpropogate(error, &output);
             }
         }
+        layer_above -> backpropogate(error);
     }
     // Constructor
     Layer(Layer & Layer_Above) {
@@ -116,6 +118,8 @@ public:
     vector<float> get_layer_output() {
         return inputs;
     }
+    // This needs to be empty since you don't do it for backpropogation
+    void backpropogate(int error) {}
     // Constructor for the inputlayer
     InputLayer(vector<float> outputs) {
         inputs = outputs;
