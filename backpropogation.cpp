@@ -7,21 +7,27 @@
 
 using namespace std;
 
+const float inputs[4][3] = {{0.0f, 0.0f, 1.0f},
+							{0.0f, 1.0f, 1.0f},
+							{1.0f, 0.0f, 1.0f},
+							{1.0f, 1.0f, 1.0f}};
+const float outputs[4] = {0.0f, 1.0f, 1.0f, 0.0f};
+
 // Makes a random float from -10.0 to 10.0
 float rand_float() {
 	return -10.0f + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 20.0f));
 }
 
-// Calculates the mean squared error
-float mse(float ideal, float actual) {
-	return pow(ideal - actual, 2);
+// Calculates the rms error
+float rms(float ideal, float actual) {
+	return ideal - actual;
 }
 
 class Neuron {
 private:
 	// Gets the node deltas
 	float node_delta(float error, float output) {
-		return -1 * mse(error, output) * output * (1.0f - output);
+		return -1 * rms(error, output) * output * (1.0f - output);
 	}
 	// Gets the gradient
 	float gradient(float error, float output) {
@@ -54,11 +60,12 @@ public:
 		if (!this -> const_output) {
 			for (int i = 0; i < this -> weights.size(); i++) {
 				// Grab the previous weight
-				float temp = this -> previous[i];
+				float prev = this -> previous[i];
 				// Set the new rate using the gradient
-				this -> weights[i] = LEARN_RATE * gradient(error, this -> sigmoid(layer_output)) + MOMENTUM * temp;
+				float rate = LEARN_RATE * gradient(error, this -> sigmoid(layer_output)) + MOMENTUM * prev;
+				this -> weights[i] -= rate;
 				// Save the difference as the new previous rate for the next calculation
-				this -> previous[i] = this -> weights[i] - this -> previous[i];
+				this -> previous[i] = rate;
 			}
 		}
 	}
@@ -100,7 +107,7 @@ public:
 		for (int i = 0; i < neurons.size(); i++) {
 			if (!neurons.at(i) -> const_output) {
 				vector<float> output = layer_above -> get_layer_output();
-				neurons.at(i)->backpropogate(error, &output);
+				neurons.at(i) -> backpropogate(error, &output);
 			}
 		}
 		// This thing does backpropogation for the layer above
@@ -108,8 +115,8 @@ public:
 	}
 	// This corrects the error
 	float correct_error(float error) {
-		this->backpropogate(error);
-		return 1 - get_layer_output()[0];
+		this -> backpropogate(error);
+		return 1.0f - get_layer_output()[0];
 	}
 	// Constructor
 	Layer(Layer & Layer_Above) {
@@ -168,10 +175,11 @@ int main() {
 	vector<float> output = output_layer.get_layer_output();
 	cout << "initial output is " << output[0] << endl;
 
-	float error = output_layer.correct_error(1.0f - output_layer.get_layer_output()[0]);
+	// Correct error
+	float error = output_layer.correct_error(rms(1.0f, output_layer.get_layer_output()[0]));
 
 	while (error > 0.05f) {
-		error = output_layer.correct_error(1.0f - output_layer.get_layer_output()[0]);
+		error = output_layer.correct_error(error);
 		cout << error << endl;
 	}
 
