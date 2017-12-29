@@ -14,7 +14,7 @@ float rand_float() {
 
 // Calculates the mean squared error
 float mse(float ideal, float actual) {
-	return ideal - actual;
+	return pow(ideal - actual, 2);
 }
 
 class Neuron {
@@ -108,7 +108,7 @@ public:
 	// This corrects the error
 	float correct_error(float error) {
 		this->backpropogate(error);
-		return get_layer_output()[0];
+		return 1 - get_layer_output()[0];
 	}
 	// Constructor
 	Layer(Layer & Layer_Above) {
