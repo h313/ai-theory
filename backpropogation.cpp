@@ -50,12 +50,15 @@ public:
 	}
 	// Backpropogation for just this neuron
 	void backpropogate(float error, vector<float>* layer_output) {
-		for (int i = 0; i < this->weights.size(); i++) {
-			// Put the previous weight into the previous vector
-			float temp = this->previous[i];
-			this -> previous[i] = this -> weights[i];
-			// Set the new rate using the gradient
-			this -> weights[i] = LEARN_WEIGHT * gradient(error, layer_output->at(i)) + MOMENTUM * temp;
+		// Only do it if it's not a dropout neuron
+		if (!this -> const_output) {
+			for (int i = 0; i < this->weights.size(); i++) {
+				// Put the previous weight into the previous vector
+				float temp = this->previous[i];
+				this -> previous[i] = this -> weights[i];
+				// Set the new rate using the gradient
+				this -> weights[i] = LEARN_WEIGHT * gradient(error, layer_output->at(i)) + MOMENTUM * temp;
+			}
 		}
 	}
 	// Constructors for the neuron
